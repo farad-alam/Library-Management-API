@@ -17,3 +17,5 @@ export const bookValidationSchema = z.object({
   copies: z.number().int().nonnegative({message:"Copies can not be less than 0"}),
   available: z.boolean().default(true).optional(),
 });
+
+export const updateBookValidationSchema = bookValidationSchema.partial()
