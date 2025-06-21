@@ -1,3 +1,7 @@
+import { Types } from "mongoose";
+import { z } from "zod";
+import { borrowValidationSchema } from "../validationSchema/borrow.validation";
+
 enum Genre {
   FICTION = "FICTION",
   NON_FICTION = "NON_FICTION",
@@ -16,6 +20,21 @@ export interface IBook {
     copies: number;
     available?: boolean;
 }
+
+
+
+
+export interface IBorrow {
+  book: Types.ObjectId;
+  quantity: number;
+  dueDate: Date
+}
+
+export type BorrowInput = z.infer<typeof borrowValidationSchema>
+
+// book (objectId) — Mandatory. References the borrowed book’s ID.
+// quantity (number) — Mandatory. Positive integer representing the number of copies borrowed.
+// dueDate (date) — Mandatory. The date by which the book must be returned.
 
 
 export interface ApiResponse <T> {
