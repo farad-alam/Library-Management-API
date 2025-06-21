@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { IBook } from "../interfaces/book.interface";
 
 export const bookValidationSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
