@@ -9,9 +9,9 @@ import {
 import { ZodError } from "zod";
 import { Book } from "../../models/book.model";
 
-const borrowRouter = express.Router();
 
-borrowRouter.post("/borrow", async (req: Request, res: Response) => {
+
+export const borrowBookControler =  async (req: Request, res: Response) => {
   try {
     // validate using zod schema
     const body = await borrowValidationSchema.parseAsync(req.body);
@@ -60,7 +60,7 @@ borrowRouter.post("/borrow", async (req: Request, res: Response) => {
       return
     }
 
-    // create anew instance in book model
+    // create anew instance in Borrowbook model
     const newBorrowBook = await Borrow.create(body);
 
     // console.log(body);
@@ -93,10 +93,10 @@ borrowRouter.post("/borrow", async (req: Request, res: Response) => {
       })
     );
   }
-});
+};
 
 
-borrowRouter.get("/borrow", async (req: Request, res: Response) => {
+export const borrowBookSummaryControler =  async (req: Request, res: Response) => {
   try {
 
 
@@ -151,6 +151,6 @@ borrowRouter.get("/borrow", async (req: Request, res: Response) => {
       })
     );
   }
-});
+};
 
-export default borrowRouter;
+
