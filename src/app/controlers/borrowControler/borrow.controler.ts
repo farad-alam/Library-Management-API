@@ -95,4 +95,62 @@ borrowRouter.post("/borrow", async (req: Request, res: Response) => {
   }
 });
 
+
+borrowRouter.get("/borrow", async (req: Request, res: Response) => {
+  try {
+
+
+    // 
+    const summary = await Borrow.aggregate([
+      {
+        $group: {
+          _id: "$book",
+          totalQuantity: { $sum: "$quantity" },
+        },
+      },
+      {
+        $lookup: {
+          from: "books", // ⚠️ Collection name in MongoDB is usually lowercase plural
+          localField: "_id",
+          foreignField: "_id",
+          as: "bookInfo",
+        },
+      },
+      {
+        $unwind: "$bookInfo",
+      },
+      {
+        $project: {
+          _id: 0,
+          totalQuantity: 1,
+          book: {
+            title: "$bookInfo.title",
+            isbn: "$bookInfo.isbn",
+          },
+        },
+      },
+    ]);
+
+    // console.log(body);
+    res.status(201).send(
+      successApiResponse({
+        message: "Borrowed books summary retrieved successfully",
+        success: true,
+        data: summary,
+      })
+    );
+  } catch (error: any) {
+
+    // server Error
+    res.status(500).send(
+      errorApiResponse({
+        message:
+          "Unexpected Server Error while trying to genarate Borrowed books summary",
+        success: false,
+        error: error,
+      })
+    );
+  }
+});
+
 export default borrowRouter;
