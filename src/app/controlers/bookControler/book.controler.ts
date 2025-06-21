@@ -119,7 +119,7 @@ bookRouter.get(
       // server Error
       res.status(500).send(
         errorApiResponse({
-          message: "Unexpected Server Error",
+          message: "Unexpected Server Error while retriving book",
           success: false,
           error: error,
         })

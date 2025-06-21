@@ -20,8 +20,8 @@ const borrowSchema = new Schema<BorrowInput>(
   },
   {
     timestamps: true,
-  
+    versionKey: false,
   }
 );
 
-export const Borrow = model<BorrowInput>("Borrow", borrowSchema)
+export const Borrow = model<BorrowInput>("Borrow", borrowSchema);

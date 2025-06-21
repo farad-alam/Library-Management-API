@@ -110,7 +110,7 @@ borrowRouter.get("/borrow", async (req: Request, res: Response) => {
       },
       {
         $lookup: {
-          from: "books", // ⚠️ Collection name in MongoDB is usually lowercase plural
+          from: "books", 
           localField: "_id",
           foreignField: "_id",
           as: "bookInfo",
@@ -132,7 +132,7 @@ borrowRouter.get("/borrow", async (req: Request, res: Response) => {
     ]);
 
     // console.log(body);
-    res.status(201).send(
+    res.status(200).send(
       successApiResponse({
         message: "Borrowed books summary retrieved successfully",
         success: true,
