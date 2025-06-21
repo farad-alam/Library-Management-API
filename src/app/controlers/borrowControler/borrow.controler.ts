@@ -17,8 +17,9 @@ borrowRouter.post("/borrow", async (req: Request, res: Response) => {
     const body = await borrowValidationSchema.parseAsync(req.body);
 
     // find the book exist or not
-    const getBookBuyID = await Book.findById(body.book);
-    if (!getBookBuyID) {
+    const getBookByID = await Book.findById(body.book);
+    console.log(getBookByID);
+    if (!getBookByID) {
       res.status(404).send(
         errorApiResponse({
           message: "Book not found",
@@ -28,8 +29,40 @@ borrowRouter.post("/borrow", async (req: Request, res: Response) => {
       );
       return;
     }
+
+    // copies avilable or not
+    if (!getBookByID.available || getBookByID.copies ===0 ) {
+      res.status(409).send(
+        errorApiResponse({
+          message: "Book is not avilable to Borrow",
+          success: false,
+          error: `Book with ID: ${body.book} is not currently avilable.`,
+        })
+      );
+      return;
+    }
+
+    // reduce by quantity 
+    if (getBookByID.copies >= body.quantity ) {
+      getBookByID.copies -= body.quantity
+      await getBookByID.save()
+
+      // update avilability
+      await getBookByID.updateAvailableStatus();
+    } else{
+      res.status(409).send(
+        errorApiResponse({
+          message: "Not enough copies available",
+          success: false,
+          error: `Only ${getBookByID.copies} copies available, but ${body.quantity} requested.`,
+        })
+      );
+      return
+    }
+
     // create anew instance in book model
     const newBorrowBook = await Borrow.create(body);
+
     // console.log(body);
     res.status(201).send(
       successApiResponse({
@@ -39,6 +72,7 @@ borrowRouter.post("/borrow", async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
+
     // Zod error
     if (error instanceof ZodError) {
       res.status(400).send(

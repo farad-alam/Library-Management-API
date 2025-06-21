@@ -14,7 +14,7 @@ export const bookValidationSchema = z.object({
   ]),
   isbn: z.string().trim().min(1, "ISBN is required"),
   description: z.string().max(10000).optional(),
-  copies: z.number().int().nonnegative({message:"Copies can not be less than 0"}),
+  copies: z.number().int().min(1, { message: "Copies must be at least 1" }),
   available: z.boolean().default(true).optional(),
 });
 

@@ -12,39 +12,37 @@ enum Genre {
 }
 
 export interface IBook {
-    title : string;
-    author : string;
-    genre : Genre;
-    isbn : string;
-    description?: string;
-    copies: number;
-    available?: boolean;
+  title: string;
+  author: string;
+  genre: Genre;
+  isbn: string;
+  description?: string;
+  copies: number;
+  available?: boolean;
 }
 
-
-
+export interface IBookDocument extends IBook, Document {
+  updateAvailableStatus: () => Promise<IBookDocument>;
+}
 
 export interface IBorrow {
   book: Types.ObjectId;
   quantity: number;
-  dueDate: Date
+  dueDate: Date;
 }
 
-export type BorrowInput = z.infer<typeof borrowValidationSchema>
+export type BorrowInput = z.infer<typeof borrowValidationSchema>;
 
 // book (objectId) — Mandatory. References the borrowed book’s ID.
 // quantity (number) — Mandatory. Positive integer representing the number of copies borrowed.
 // dueDate (date) — Mandatory. The date by which the book must be returned.
 
-
-export interface ApiResponse <T> {
+export interface ApiResponse<T> {
   message: string;
   success: boolean;
-  error ?: T;
-  data ?: T;
+  error?: T;
+  data?: T;
 }
-
-
 
 // const result = successApiResponse({
 //   message: "apirequest succes",
