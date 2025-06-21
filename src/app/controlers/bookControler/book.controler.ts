@@ -11,6 +11,7 @@ import {
 import { ZodError } from "zod";
 import { Book } from "../../models/book.model";
 import mongoose from "mongoose";
+import { isValidMongoObjectID } from "../../middlewares/book.middlewares";
 
 const bookRouter = express.Router();
 
@@ -51,7 +52,8 @@ bookRouter.post("/books", async (req: Request, res: Response) => {
   }
 });
 
-bookRouter.get("/books", async (req: Request, res: Response) => {
+bookRouter.get("/books", 
+  async (req: Request, res: Response) => {
   let { filter, sortBy, sort, limit } = req.query;
 
   let query = filter ? { genre: filter } : {};
@@ -88,6 +90,7 @@ bookRouter.get("/books", async (req: Request, res: Response) => {
 
 bookRouter.get(
   "/books/:bookId",
+  isValidMongoObjectID,
   async (req: Request, res: Response): Promise<void> => {
     const { bookId } = req.params;
 
@@ -128,21 +131,11 @@ bookRouter.get(
   }
 );
 
-bookRouter.put("/books/:bookId", async (req: Request, res: Response) => {
+bookRouter.put("/books/:bookId", isValidMongoObjectID, async (req: Request, res: Response) => {
   const { bookId } = req.params;
 
   try {
-    // check object Id is correct or not
-    if (!mongoose.Types.ObjectId.isValid(bookId)) {
-      res.status(404).send(
-        errorApiResponse({
-          message: "Book  ID is not Correct",
-          success: false,
-          error: `Your provided book ID: ${bookId} is not correct`,
-        })
-      );
-      return;
-    }
+    
     // validate with zod
     const body = await updateBookValidationSchema.parseAsync(req.body);
 
@@ -196,22 +189,12 @@ bookRouter.put("/books/:bookId", async (req: Request, res: Response) => {
 
 bookRouter.delete(
   "/books/:bookId",
+  isValidMongoObjectID,
   async (req: Request, res: Response) => {
     const { bookId } = req.params;
 
     try {
-      // check object Id is correct or not
-      if (!mongoose.Types.ObjectId.isValid(bookId)) {
-        res.status(404).send(
-          errorApiResponse({
-            message: "Book  ID is not Correct",
-            success: false,
-            error: `Your provided book ID: ${bookId} is not correct`,
-          })
-        );
-        return;
-      }
-
+      
       // find and delete the book by id
       const bookById = await Book.findByIdAndDelete(bookId);
 
