@@ -15,7 +15,7 @@ import { isValidMongoObjectID } from "../../middlewares/book.middlewares";
 
 const bookRouter = express.Router();
 
-bookRouter.post("/books", async (req: Request, res: Response) => {
+export const createBookControler =  async (req: Request, res: Response) => {
   try {
     // validate using zod schema
     const body = await bookValidationSchema.parseAsync(req.body);
@@ -50,10 +50,9 @@ bookRouter.post("/books", async (req: Request, res: Response) => {
       })
     );
   }
-});
+};
 
-bookRouter.get("/books", 
-  async (req: Request, res: Response) => {
+export const getAllBooksControler = async (req: Request, res: Response) => {
   let { filter, sortBy, sort, limit } = req.query;
 
   let query = filter ? { genre: filter } : {};
@@ -86,12 +85,9 @@ bookRouter.get("/books",
       })
     );
   }
-});
+};
 
-bookRouter.get(
-  "/books/:bookId",
-  isValidMongoObjectID,
-  async (req: Request, res: Response): Promise<void> => {
+export const getBookByIDControler = async (req: Request, res: Response): Promise<void> => {
     const { bookId } = req.params;
 
     try {
@@ -128,10 +124,9 @@ bookRouter.get(
         })
       );
     }
-  }
-);
+  };
 
-bookRouter.put("/books/:bookId", isValidMongoObjectID, async (req: Request, res: Response) => {
+export const updateBookByIDControler = async (req: Request, res: Response) => {
   const { bookId } = req.params;
 
   try {
@@ -185,12 +180,9 @@ bookRouter.put("/books/:bookId", isValidMongoObjectID, async (req: Request, res:
       })
     );
   }
-});
+};
 
-bookRouter.delete(
-  "/books/:bookId",
-  isValidMongoObjectID,
-  async (req: Request, res: Response) => {
+export const deleteBookByIDControler = async (req: Request, res: Response) => {
     const { bookId } = req.params;
 
     try {
@@ -227,7 +219,6 @@ bookRouter.delete(
         })
       );
     }
-  }
-);
+  };
 
 export default bookRouter;
